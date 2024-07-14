@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import Task from './Task';
+
 function ToDoList() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
@@ -22,6 +24,16 @@ function ToDoList() {
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   };
+  // edit task
+  const editTask = async (id, task) => {
+    const response = await axios.put(`http://localhost:8000/tasks/${id}`, {
+      task,
+    });
+    const updatedTasks = tasks.map((singleTask) =>
+      singleTask.id === id ? { ...response.data } : singleTask
+    );
+    setTasks(updatedTasks);
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -36,17 +48,15 @@ function ToDoList() {
   const handleChange = (e) => {
     setNewTask(e.target.value);
   };
-  const handleDeleteClick = (id) => {
-    deleteTask(id);
-  };
 
   const renderedTasks = tasks.map((singleTask) => {
-    const { task, id } = singleTask;
     return (
-      <li key={id}>
-        {task}
-        <button onClick={() => handleDeleteClick(id)}>delete</button>
-      </li>
+      <Task
+        key={singleTask.id}
+        singleTask={singleTask}
+        deleteTask={deleteTask}
+        editTask={editTask}
+      />
     );
   });
 

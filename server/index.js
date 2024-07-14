@@ -30,6 +30,17 @@ app.delete('/tasks/:id', (req, res) => {
   res.status(204).end();
 });
 
+app.put('/tasks/:id', (req, res) => {
+  const { id } = req.params;
+  const updatedTask = req.body.task;
+  // id should be converted to a number because id in req.params is a string
+  const taskIndex = tasks.findIndex((task) => task.id === +id);
+
+  tasks[taskIndex] = { id: +id, task: updatedTask };
+
+  res.status(200).json(tasks[taskIndex]);
+});
+
 app.use((req, res) => {
   res.status(404).send('Error 404');
 });

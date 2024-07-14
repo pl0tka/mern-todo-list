@@ -1,0 +1,16 @@
+{
+  "name": "fullstack-to-do-list",
+  "version": "1.0.0",
+  "description": "It's a simple MERN To-Do List",
+  "main": "index.js",
+  "scripts": {
+    "install-server": "cd client && npm install",
+    "start-server": "cd server && node index.js",
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
+    "start-client": "cd client && npm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

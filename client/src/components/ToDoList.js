@@ -3,30 +3,32 @@ import { useState, useEffect } from 'react';
 
 import Task from './Task';
 
+const backendURL = `https://simple-todo-list-kj67.onrender.com`;
+
 function ToDoList() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
 
   // fetch data
   const fetchTasks = async () => {
-    const response = await axios.get('http://localhost:8000/tasks');
+    const response = await axios.get(`${backendURL}/tasks`);
     setTasks(response.data);
   };
   // create task
   const createTask = async (task) => {
-    const response = await axios.post('http://localhost:8000/tasks', { task });
+    const response = await axios.post(`${backendURL}/tasks`, { task });
     const updatedTasks = [...tasks, response.data];
     setTasks(updatedTasks);
   };
   // delete task
   const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:8000/tasks/${id}`);
+    await axios.delete(`${backendURL}/tasks/${id}`);
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   };
   // edit task
   const editTask = async (id, task) => {
-    const response = await axios.put(`http://localhost:8000/tasks/${id}`, {
+    const response = await axios.put(`${backendURL}/tasks/${id}`, {
       task,
     });
     const updatedTasks = tasks.map((singleTask) =>

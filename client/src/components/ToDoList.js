@@ -1,19 +1,14 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import useFetch from '../hooks/useFetch';
 import Task from './Task';
-
-const backendURL = `https://simple-todo-list-kj67.onrender.com`;
+import { backendURL } from '../utils/utils';
 
 function ToDoList() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
 
-  // fetch data
-  const fetchTasks = async () => {
-    const response = await axios.get(`${backendURL}/tasks`);
-    setTasks(response.data);
-  };
   // create task
   const createTask = async (task) => {
     const response = await axios.post(`${backendURL}/tasks`, { task });
@@ -37,9 +32,33 @@ function ToDoList() {
     setTasks(updatedTasks);
   };
 
+  // fetch data
+  const [data, loading, error] = useFetch(`${backendURL}/tasks`);
+
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (data) {
+      setTasks(data);
+    }
+  }, [data]);
+
+  // render content depending on the response
+  let content;
+  if (loading) {
+    content = <p>loading...</p>;
+  } else if (error) {
+    content = <p>{error}</p>;
+  } else {
+    content = tasks.map((singleTask) => {
+      return (
+        <Task
+          key={singleTask.id}
+          singleTask={singleTask}
+          deleteTask={deleteTask}
+          editTask={editTask}
+        />
+      );
+    });
+  }
 
   // handle form actions
   const handleSubmit = (e) => {
@@ -50,17 +69,6 @@ function ToDoList() {
   const handleChange = (e) => {
     setNewTask(e.target.value);
   };
-
-  const renderedTasks = tasks.map((singleTask) => {
-    return (
-      <Task
-        key={singleTask.id}
-        singleTask={singleTask}
-        deleteTask={deleteTask}
-        editTask={editTask}
-      />
-    );
-  });
 
   return (
     <div>
@@ -76,7 +84,7 @@ function ToDoList() {
         <button>Add New Task</button>
       </form>
       <h1>List of tasks</h1>
-      <ol>{renderedTasks}</ol>
+      <ol>{content}</ol>
     </div>
   );
 }
